@@ -358,9 +358,7 @@ const AdminDefinition: AdminDefinitions = {
                 id: 'BillingHistory',
                 component: BillingHistory,
             },
-
-            // cloud only view
-            isHidden: it.not(it.licensedForFeature('Cloud')),
+            isHidden: false,
             isDisabled: it.not(it.userHasWritePermissionOnResource('billing')),
         },
         company_info: {
@@ -389,8 +387,8 @@ const AdminDefinition: AdminDefinitions = {
                 component: CompanyInfoEdit,
             },
 
-            // added isHidden since it was not provided. set to default false
-            isHidden: false,
+            // cloud only view
+            isHidden: it.not(it.licensedForFeature('Cloud')),
             isDisabled: it.not(it.userHasWritePermissionOnResource('billing')),
         },
         payment_info: {
@@ -421,10 +419,10 @@ const AdminDefinition: AdminDefinitions = {
                 id: 'PaymentInfoEdit',
                 component: PaymentInfoEdit,
             },
-            isDisabled: it.not(it.userHasWritePermissionOnResource('billing')),
 
-            // set to default value since isHidden wasn't provided.
-            isHidden: false,
+            // cloud only view
+            isDisabled: it.not(it.userHasWritePermissionOnResource('billing')),
+            isHidden: it.not(it.licensedForFeature('Cloud')),
         },
     },
     reporting: {
