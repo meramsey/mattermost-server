@@ -8,7 +8,7 @@ import {createSelector} from 'reselect';
 import {getMySystemPermissions} from 'mattermost-redux/selectors/entities/roles_helpers';
 import {ResourceToSysConsolePermissionsTable, RESOURCE_KEYS} from 'mattermost-redux/constants/permissions_sysconsole';
 
-import AdminDefinition from 'components/admin_console/admin_definition.jsx';
+import AdminDefinition from 'components/admin_console/admin_definition';
 
 export const getAdminDefinition = createSelector(
     'getAdminDefinition',
