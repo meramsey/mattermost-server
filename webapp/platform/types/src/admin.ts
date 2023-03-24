@@ -105,8 +105,8 @@ export type CheckFunction = (config?: DeepPartial<AdminConfig>, state?: Record<s
 
 export type AdminDefinitionPages = {
     url: string;
-    title?: string;
-    title_default?: string;
+    title: string;
+    title_default: string;
     isDiscovery?: boolean;
     schema: {
         id: string;
@@ -120,11 +120,11 @@ export type AdminDefinitionPages = {
         onConfigSave?: (config: any) => unknown | undefined;
     };
     searchableStrings?: Array<string | unknown[]>;
-    isHidden?: CheckFunction | boolean;
+    isHidden: CheckFunction | boolean;
     isDisabled?: CheckFunction | boolean;
     restrictedIndicator?: {
         value: (cloud: CloudState) => JSX.Element;
-        shouldDisplay: (license: ClientLicense, subscriptionProduct: Product) => boolean;
+        shouldDisplay: (license: ClientLicense, subscriptionProduct: Product | undefined) => boolean;
     };
 }
 
@@ -149,7 +149,7 @@ type IntegrationsSections = 'integration_management' | 'bot_accounts' | 'gif' | 
 type ComplianceSections = 'custom_policy_form_edit' | 'custom_policy_form' | 'global_policy_form' | 'data_retention' | 'data_retention_feature_discovery' | 'message_export' | 'compliance_export_feature_discovery' | 'audits' | 'custom_terms_of_service' | 'custom_terms_of_service_feature_discovery';
 type ExperimentalSections = 'experimental_features' | 'feature_flags' | 'bleve';
 
-export interface AdminDefinitions {
+export type AdminDefinitions = {
     about: AdminSection<AboutSections>;
     reporting: AdminSection<ReportingSections>;
     billing: AdminSection<BillingSections>;
@@ -162,4 +162,4 @@ export interface AdminDefinitions {
     integrations: AdminSection<IntegrationsSections>;
     compliance: AdminSection<ComplianceSections>;
     experimental: AdminSection<ExperimentalSections>;
-}
+};
