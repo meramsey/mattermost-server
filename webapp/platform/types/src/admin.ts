@@ -104,6 +104,7 @@ export type ConsoleAccess = {
 export type CheckFunction = (config?: DeepPartial<AdminConfig>, state?: Record<string, any>, license?: ClientLicense, enterpriseReady?: boolean, consoleAccess?: ConsoleAccess, cloud?: CloudState, isSystemAdmin?: boolean) => boolean;
 
 export type AdminDefinitionPages = {
+    id: string;
     url: string;
     title: string;
     title_default: string;
@@ -114,27 +115,28 @@ export type AdminDefinitionPages = {
         isHidden?: CheckFunction | boolean;
         name?: string;
         name_default?: string;
-        settings?: unknown[];
-        sections?: unknown[];
+        settings?: Record<string, any>[];
+        sections?: Record<string, any>[];
         onConfigLoad?: (config: any) => unknown | undefined;
         onConfigSave?: (config: any) => unknown | undefined;
     };
-    searchableStrings?: Array<string | unknown[]>;
+    searchableStrings?: Array<string | [string, Record<string, string>]>;
     isHidden: CheckFunction | boolean;
-    isDisabled?: CheckFunction | boolean;
+    isDisabled: CheckFunction | boolean;
     restrictedIndicator?: {
         value: (cloud: CloudState) => JSX.Element;
         shouldDisplay: (license: ClientLicense, subscriptionProduct: Product | undefined) => boolean;
     };
 }
 
-type AdminSection<T extends string> = {
+export type AdminSection<T extends string> = {
     icon: JSX.Element | ReactElement<any, any>;
     sectionTitle: string;
     sectionTitleDefault: string;
     isHidden: CheckFunction | boolean;
     id?: string;
-} & Record<T, AdminDefinitionPages>
+    pages: Array<AdminDefinitionPages>;
+};
 
 type AboutSections = 'license'
 type ReportingSections = 'workspace_optimization' | 'system_analytics' | 'team_statistics' | 'server_logs';
@@ -162,4 +164,4 @@ export type AdminDefinitions = {
     integrations: AdminSection<IntegrationsSections>;
     compliance: AdminSection<ComplianceSections>;
     experimental: AdminSection<ExperimentalSections>;
-};
+} & Record<string, AdminSection<string>>;
