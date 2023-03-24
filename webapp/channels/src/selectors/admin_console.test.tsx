@@ -3,7 +3,7 @@
 
 import AdminDefinition from 'components/admin_console/admin_definition';
 
-import {getAdminDefinition} from 'selectors/admin_console.jsx';
+import {getAdminDefinition} from 'selectors/admin_console';
 
 describe('Selectors.AdminConsole', () => {
     describe('get admin definitions', () => {
@@ -25,12 +25,16 @@ describe('Selectors.AdminConsole', () => {
             const result = getAdminDefinition({
                 plugins: {
                     adminConsoleReducers: {
-                        'add-something': (data) => {
+                        'add-something': (data: Record<string, string>) => {
                             data.something = 'test';
                             return data;
                         },
                     },
                 },
+            });
+
+            console.log({
+                result,
             });
             expect(result.something).toEqual('test');
         });
@@ -39,11 +43,11 @@ describe('Selectors.AdminConsole', () => {
             const result = getAdminDefinition({
                 plugins: {
                     adminConsoleReducers: {
-                        'add-something': (data) => {
+                        'add-something': (data: Record<string, string>) => {
                             data.something = 'test';
                             return data;
                         },
-                        'add-other-thing': (data) => {
+                        'add-other-thing': (data: Record<string, string>) => {
                             data.otherThing = 'other-thing';
                             return data;
                         },

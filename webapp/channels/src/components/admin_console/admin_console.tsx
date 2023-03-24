@@ -100,12 +100,10 @@ export default class AdminConsole extends React.PureComponent<Props, State> {
     private renderRoutes = (extraProps: ExtraProps) => {
         const {adminDefinition, config, license, buildEnterpriseReady, consoleAccess, cloud, isCurrentUserSystemAdmin} = this.props;
 
-        type Section = AdminDefinitions[keyof AdminDefinitions]
+        const schemas: AdminDefinitionPages[] = [];
 
         // looking at each section of the adminDefinitions
-        const schemas: AdminDefinitionPages[] = Object.values(adminDefinition).reduce((acc, section: Section) => {
-            let items: AdminDefinitionPages[] = [];
-
+        Object.values(adminDefinition).forEach((section) => {
             let isSectionHidden = false;
 
             // finding the pages that are hidden
@@ -121,16 +119,16 @@ export default class AdminConsole extends React.PureComponent<Props, State> {
             });
 
             if (!isSectionHidden) {
-                items = Object.values(section).filter((value) => {
-                    if (typeof value === 'object') {
+                const items: AdminDefinitionPages[] = Object.values(section).filter((value) => {
+                    if (value && typeof value === 'object') {
                         return Object.hasOwn(value, 'schema');
                     }
 
                     return false;
-                }) as AdminDefinitionPages[];
+                });
+                schemas.push(...items);
             }
-            return acc.concat(items);
-        }, [] as Section[]);
+        });
 
         let defaultUrl = '';
 
