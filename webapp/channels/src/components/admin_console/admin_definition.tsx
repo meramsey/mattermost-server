@@ -362,7 +362,7 @@ const AdminDefinition: AdminDefinitions = {
                     id: 'BillingHistory',
                     component: BillingHistory,
                 },
-                isHidden: false,
+                isHidden: it.not(it.userHasReadPermissionOnResource('billing')),
                 isDisabled: it.not(it.userHasWritePermissionOnResource('billing')),
             },
             {
