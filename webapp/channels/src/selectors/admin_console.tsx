@@ -13,8 +13,8 @@ import AdminDefinition from 'components/admin_console/admin_definition';
 export const getAdminDefinition = createSelector(
     'getAdminDefinition',
     () => AdminDefinition,
-    (state) => state.plugins.adminConsoleReducers,
-    (adminDefinition, reducers) => {
+    (state: Record<string, any>) => state.plugins.adminConsoleReducers,
+    (adminDefinition, reducers: Record<string, any>) => {
         let result = cloneDeep(AdminDefinition);
         for (const reducer of Object.values(reducers)) {
             result = reducer(result);
@@ -23,7 +23,7 @@ export const getAdminDefinition = createSelector(
     },
 );
 
-export const getAdminConsoleCustomComponents = (state, pluginId) =>
+export const getAdminConsoleCustomComponents = (state: Record<string, any>, pluginId: string) =>
     state.plugins.adminConsoleCustomComponents[pluginId] || {};
 
 export const getConsoleAccess = createSelector(
@@ -32,14 +32,15 @@ export const getConsoleAccess = createSelector(
     getMySystemPermissions,
     (adminDefinition, mySystemPermissions) => {
         const consoleAccess = {read: {}, write: {}};
-        const addEntriesForKey = (entryKey) => {
+        const addEntriesForKey = (entryKey: string) => {
             const permissions = ResourceToSysConsolePermissionsTable[entryKey].filter((x) => mySystemPermissions.has(x));
-            consoleAccess.read[entryKey] = permissions.length !== 0;
-            consoleAccess.write[entryKey] = permissions.some((permission) => permission.startsWith('sysconsole_write_'));
+            Object.assign(consoleAccess.read, {[entryKey]: permissions.length !== 0});
+            Object.assign(consoleAccess.write, {[entryKey]: permissions.some((permission) => permission.startsWith('sysconsole_write_'))});
         };
-        const mapAccessValuesForKey = ([key]) => {
-            if (typeof RESOURCE_KEYS[key.toUpperCase()] === 'object') {
-                Object.values(RESOURCE_KEYS[key.toUpperCase()]).forEach((entry) => {
+        const mapAccessValuesForKey = ([key]: [string, any]) => {
+            const upperKey = key.toUpperCase() as keyof typeof RESOURCE_KEYS;
+            if (typeof RESOURCE_KEYS[upperKey] === 'object') {
+                Object.values(RESOURCE_KEYS[upperKey]).forEach((entry) => {
                     addEntriesForKey(entry);
                 });
             } else {

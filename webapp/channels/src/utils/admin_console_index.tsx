@@ -9,6 +9,7 @@ import {PluginRedux} from '@mattermost/types/plugins';
 import AdminDefinition from 'components/admin_console/admin_definition';
 
 import {getPluginEntries} from './admin_console_plugin_index';
+import {AdminDefinitionPages} from '@mattermost/types/admin';
 
 export type Index = {
 
@@ -97,9 +98,10 @@ export function adminDefinitionsToUrlsAndTexts(adminDefinition: typeof AdminDefi
         adminDefinition.billing,
     ];
     for (const section of sections) {
-        for (const item of Object.values(section)) {
-            if (!item.isDiscovery) {
-                entries[item.url] = extractTextsFromSection(item, intl);
+        for (const page of Object.values(section)) {
+            if (typeof page === 'object' && Object.hasOwn(page, 'isDiscovery')) {
+                const discoveryPage = page as AdminDefinitionPages;
+                entries[discoveryPage.url] = extractTextsFromSection(page, intl);
             }
         }
     }
