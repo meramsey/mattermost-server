@@ -184,11 +184,14 @@ const SAML_SETTINGS_CANONICAL_ALGORITHM_C14N11 = 'Canonical1.1';
 //   - remove_action: An store action to remove the file.
 //   - fileType: A list of extensions separated by ",". E.g. ".jpg,.png,.gif".
 
+type State = Record<string, any>;
+type Config = DeepPartial<AdminConfig>;
+
 export const it = {
-    not: (func: unknown | boolean): CheckFunction | boolean => (config?: DeepPartial<AdminConfig>, state?: Record<string, any>, license?: ClientLicense, enterpriseReady?: boolean, consoleAccess?: ConsoleAccess, cloud?: CloudState, isSystemAdmin?: boolean) => {
+    not: (func: unknown | boolean): CheckFunction | boolean => (config?: Config, state?: State, license?: ClientLicense, enterpriseReady?: boolean, consoleAccess?: ConsoleAccess, cloud?: CloudState, isSystemAdmin?: boolean) => {
         return typeof func === 'function' ? !func(config, state, license, enterpriseReady, consoleAccess, cloud, isSystemAdmin) : !func;
     },
-    all: (...funcs: unknown[] | boolean[]) => (config?: DeepPartial<AdminConfig>, state?: Record<string, any>, license?: ClientLicense, enterpriseReady?: boolean, consoleAccess?: ConsoleAccess, cloud?: CloudState, isSystemAdmin?: boolean) => {
+    all: (...funcs: unknown[] | boolean[]) => (config?: Config, state?: State, license?: ClientLicense, enterpriseReady?: boolean, consoleAccess?: ConsoleAccess, cloud?: CloudState, isSystemAdmin?: boolean) => {
         for (const func of funcs) {
             if (typeof func === 'function' ? !func(config, state, license, enterpriseReady, consoleAccess, cloud, isSystemAdmin) : !func) {
                 return false;
@@ -196,7 +199,7 @@ export const it = {
         }
         return true;
     },
-    any: (...funcs: unknown[] | boolean[]) => (config?: DeepPartial<AdminConfig>, state?: Record<string, any>, license?: ClientLicense, enterpriseReady?: boolean, consoleAccess?: ConsoleAccess, cloud?: CloudState, isSystemAdmin?: boolean) => {
+    any: (...funcs: unknown[] | boolean[]) => (config?: Config, state?: State, license?: ClientLicense, enterpriseReady?: boolean, consoleAccess?: ConsoleAccess, cloud?: CloudState, isSystemAdmin?: boolean) => {
         for (const func of funcs) {
             if (typeof func === 'function' ? func(config, state, license, enterpriseReady, consoleAccess, cloud, isSystemAdmin) : func) {
                 return true;
@@ -204,37 +207,37 @@ export const it = {
         }
         return false;
     },
-    stateMatches: (key: string, regex: RegExp) => (config: DeepPartial<AdminConfig>, state: Record<string, any>) => state[key].match(regex),
-    stateEquals: (key: string, value: unknown) => (config: DeepPartial<AdminConfig>, state: Record<string, any>) => state[key] === value,
-    stateIsTrue: (key: string) => (config: DeepPartial<AdminConfig>, state: Record<string, any>) => Boolean(state[key]),
-    stateIsFalse: (key: string) => (config: DeepPartial<AdminConfig>, state: Record<string, any>) => !state[key],
+    stateMatches: (key: string, regex: RegExp) => (config: Config, state: State) => state[key].match(regex),
+    stateEquals: (key: string, value: unknown) => (config: Config, state: State) => state[key] === value,
+    stateIsTrue: (key: string) => (config: Config, state: State) => Boolean(state[key]),
+    stateIsFalse: (key: string) => (config: Config, state: State) => !state[key],
     configIsTrue: (group: keyof AdminConfig, setting: any) => (config: any) => Boolean(config[group][setting]),
     configIsFalse: (group: keyof AdminConfig, setting: any) => (config: any) => !config[group][setting],
     configContains: (group: keyof AdminConfig, setting: any, word: string) => (config: any) => Boolean(config[group][setting]?.includes(word)),
-    enterpriseReady: (config: DeepPartial<AdminConfig>, state: Record<string, any>, license: ClientLicense, enterpriseReady: boolean): boolean => enterpriseReady,
-    licensed: (config: DeepPartial<AdminConfig>, state: Record<string, any>, license: ClientLicense) => license.IsLicensed === 'true',
-    cloudLicensed: (config: DeepPartial<AdminConfig>, state: Record<string, any>, license: ClientLicense) => isCloudLicense(license),
-    licensedForFeature: (feature: string) => (config: DeepPartial<AdminConfig>, state: Record<string, any>, license: ClientLicense) => license.IsLicensed && license[feature] === 'true',
-    licensedForSku: (skuName: string) => (config: DeepPartial<AdminConfig>, state: Record<string, any>, license: ClientLicense) => license.IsLicensed && license.SkuShortName === skuName,
-    licensedForCloudStarter: (config: DeepPartial<AdminConfig>, state: Record<string, any>, license: ClientLicense) => isCloudLicense(license) && license.SkuShortName === LicenseSkus.Starter,
-    hidePaymentInfo: (config: DeepPartial<AdminConfig>, state: Record<string, any>, license: ClientLicense, enterpriseReady: boolean, consoleAccess: ConsoleAccess, cloud: CloudState) => {
+    enterpriseReady: (config: Config, state: State, license: ClientLicense, enterpriseReady: boolean): boolean => enterpriseReady,
+    licensed: (config: Config, state: State, license: ClientLicense) => license.IsLicensed === 'true',
+    cloudLicensed: (config: Config, state: State, license: ClientLicense) => isCloudLicense(license),
+    licensedForFeature: (feature: string) => (config: Config, state: State, license: ClientLicense) => license.IsLicensed && license[feature] === 'true',
+    licensedForSku: (skuName: string) => (config: Config, state: State, license: ClientLicense) => license.IsLicensed && license.SkuShortName === skuName,
+    licensedForCloudStarter: (config: Config, state: State, license: ClientLicense) => isCloudLicense(license) && license.SkuShortName === LicenseSkus.Starter,
+    hidePaymentInfo: (config: Config, state: State, license: ClientLicense, enterpriseReady: boolean, consoleAccess: ConsoleAccess, cloud: CloudState) => {
         const productId = cloud?.subscription?.product_id as keyof typeof cloud['products'];
         const limits = cloud?.limits.limits;
         const subscriptionProduct = cloud?.products?.[productId];
         const isCloudFreeProduct = isCloudFreePlan(subscriptionProduct, limits);
         return cloud?.subscription?.is_free_trial === 'true' || isCloudFreeProduct;
     },
-    userHasReadPermissionOnResource: (key: string) => (config?: DeepPartial<AdminConfig>, state?: Record<string, any>, license?: ClientLicense, enterpriseReady?: boolean, consoleAccess?: ConsoleAccess) => consoleAccess?.read?.[key],
+    userHasReadPermissionOnResource: (key: string) => (config?: Config, state?: State, license?: ClientLicense, enterpriseReady?: boolean, consoleAccess?: ConsoleAccess) => consoleAccess?.read?.[key],
     userHasReadPermissionOnSomeResources: (key: Record<string, string>) => Object.values(key).some((resource) => it.userHasReadPermissionOnResource(resource)),
-    userHasWritePermissionOnResource: (key: string) => (config: DeepPartial<AdminConfig>, state: Record<string, any>, license: ClientLicense, enterpriseReady: boolean, consoleAccess: ConsoleAccess) => consoleAccess?.write?.[key],
-    isSystemAdmin: (config: DeepPartial<AdminConfig>, state: Record<string, any>, license: ClientLicense, enterpriseReady: boolean, consoleAccess: ConsoleAccess, icloud: CloudState, isSystemAdmin: boolean) => isSystemAdmin,
+    userHasWritePermissionOnResource: (key: string) => (config: Config, state: State, license: ClientLicense, enterpriseReady: boolean, consoleAccess: ConsoleAccess) => consoleAccess?.write?.[key],
+    isSystemAdmin: (config: Config, state: State, license: ClientLicense, enterpriseReady: boolean, consoleAccess: ConsoleAccess, icloud: CloudState, isSystemAdmin: boolean) => isSystemAdmin,
 };
 
 export const validators = {
     isRequired: (text: string, textDefault: string) => (value: string) => new ValidationResult(Boolean(value), text, textDefault),
 };
 
-const usesLegacyOauth = (config: DeepPartial<AdminConfig>, state: Record<string, any>, license: ClientLicense, enterpriseReady: boolean, consoleAccess: ConsoleAccess, cloud: CloudState) => {
+const usesLegacyOauth = (config: Config, state: State, license: ClientLicense, enterpriseReady: boolean, consoleAccess: ConsoleAccess, cloud: CloudState) => {
     if (!config.GitLabSettings || !config.GoogleSettings || !config.Office365Settings) {
         return false;
     }
@@ -4872,7 +4875,7 @@ const AdminDefinition: AdminDefinitions = {
                             key: 'GitLabSettings.UserAPIEndpoint',
                             label: t('admin.gitlab.userTitle'),
                             label_default: 'User API Endpoint:',
-                            dynamic_value: (value: unknown, config: AdminConfig, state: Record<string, any>) => {
+                            dynamic_value: (value: unknown, config: AdminConfig, state: State) => {
                                 if (state['GitLabSettings.Url']) {
                                     return state['GitLabSettings.Url'].replace(/\/$/, '') + '/api/v4/user';
                                 }
@@ -4885,7 +4888,7 @@ const AdminDefinition: AdminDefinitions = {
                             key: 'GitLabSettings.AuthEndpoint',
                             label: t('admin.gitlab.authTitle'),
                             label_default: 'Auth Endpoint:',
-                            dynamic_value: (value: unknown, config: AdminConfig, state: Record<string, any>) => {
+                            dynamic_value: (value: unknown, config: AdminConfig, state: State) => {
                                 if (state['GitLabSettings.Url']) {
                                     return state['GitLabSettings.Url'].replace(/\/$/, '') + '/oauth/authorize';
                                 }
@@ -4898,7 +4901,7 @@ const AdminDefinition: AdminDefinitions = {
                             key: 'GitLabSettings.TokenEndpoint',
                             label: t('admin.gitlab.tokenTitle'),
                             label_default: 'Token Endpoint:',
-                            dynamic_value: (value: unknown, config: AdminConfig, state: Record<string, any>) => {
+                            dynamic_value: (value: unknown, config: AdminConfig, state: State) => {
                                 if (state['GitLabSettings.Url']) {
                                     return state['GitLabSettings.Url'].replace(/\/$/, '') + '/oauth/token';
                                 }
@@ -5122,7 +5125,7 @@ const AdminDefinition: AdminDefinitions = {
                             key: 'GitLabSettings.UserAPIEndpoint',
                             label: t('admin.gitlab.userTitle'),
                             label_default: 'User API Endpoint:',
-                            dynamic_value: (value: unknown, config: AdminConfig, state: Record<string, any>) => {
+                            dynamic_value: (value: unknown, config: AdminConfig, state: State) => {
                                 if (state['GitLabSettings.Url']) {
                                     return state['GitLabSettings.Url'].replace(/\/$/, '') + '/api/v4/user';
                                 }
@@ -5136,7 +5139,7 @@ const AdminDefinition: AdminDefinitions = {
                             key: 'GitLabSettings.AuthEndpoint',
                             label: t('admin.gitlab.authTitle'),
                             label_default: 'Auth Endpoint:',
-                            dynamic_value: (value: unknown, config: AdminConfig, state: Record<string, any>) => {
+                            dynamic_value: (value: unknown, config: AdminConfig, state: State) => {
                                 if (state['GitLabSettings.Url']) {
                                     return state['GitLabSettings.Url'].replace(/\/$/, '') + '/oauth/authorize';
                                 }
@@ -5150,7 +5153,7 @@ const AdminDefinition: AdminDefinitions = {
                             key: 'GitLabSettings.TokenEndpoint',
                             label: t('admin.gitlab.tokenTitle'),
                             label_default: 'Token Endpoint:',
-                            dynamic_value: (value: unknown, config: AdminConfig, state: Record<string, any>) => {
+                            dynamic_value: (value: unknown, config: AdminConfig, state: State) => {
                                 if (state['GitLabSettings.Url']) {
                                     return state['GitLabSettings.Url'].replace(/\/$/, '') + '/oauth/token';
                                 }
@@ -5260,7 +5263,7 @@ const AdminDefinition: AdminDefinitions = {
                             key: 'Office365Settings.AuthEndpoint',
                             label: t('admin.office365.authTitle'),
                             label_default: 'Auth Endpoint:',
-                            dynamic_value: (value: string, config: AdminConfig, state: Record<string, any>) => {
+                            dynamic_value: (value: string, config: AdminConfig, state: State) => {
                                 if (state['Office365Settings.DirectoryId']) {
                                     return 'https://login.microsoftonline.com/' + state['Office365Settings.DirectoryId'] + '/oauth2/v2.0/authorize';
                                 }
@@ -5274,7 +5277,7 @@ const AdminDefinition: AdminDefinitions = {
                             key: 'Office365Settings.TokenEndpoint',
                             label: t('admin.office365.tokenTitle'),
                             label_default: 'Token Endpoint:',
-                            dynamic_value: (value: string, config: AdminConfig, state: Record<string, any>) => {
+                            dynamic_value: (value: string, config: AdminConfig, state: State) => {
                                 if (state['Office365Settings.DirectoryId']) {
                                     return 'https://login.microsoftonline.com/' + state['Office365Settings.DirectoryId'] + '/oauth2/v2.0/token';
                                 }
@@ -5494,7 +5497,7 @@ const AdminDefinition: AdminDefinitions = {
                             help_text: t('admin.gitlab.discoveryEndpointDesc'),
                             help_text_default: 'The URL of the discovery document for OpenID Connect with GitLab.',
                             help_text_markdown: false,
-                            dynamic_value: (value: unknown, config: AdminConfig, state: Record<string, any>) => {
+                            dynamic_value: (value: unknown, config: AdminConfig, state: State) => {
                                 if (state['GitLabSettings.Url']) {
                                     return state['GitLabSettings.Url'].replace(/\/$/, '') + '/.well-known/openid-configuration';
                                 }
@@ -5583,7 +5586,7 @@ const AdminDefinition: AdminDefinitions = {
                             help_text: t('admin.office365.discoveryEndpointDesc'),
                             help_text_default: 'The URL of the discovery document for OpenID Connect with Office 365.',
                             help_text_markdown: false,
-                            dynamic_value: (value: unknown, config: AdminConfig, state: Record<string, any>) => {
+                            dynamic_value: (value: unknown, config: AdminConfig, state: State) => {
                                 if (state['Office365Settings.DirectoryId']) {
                                     return 'https://login.microsoftonline.com/' + state['Office365Settings.DirectoryId'] + '/v2.0/.well-known/openid-configuration';
                                 }
