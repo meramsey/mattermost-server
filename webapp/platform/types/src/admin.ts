@@ -106,8 +106,10 @@ export type CheckFunction = (config?: DeepPartial<AdminConfig>, state?: Record<s
 export type AdminDefinitionPages = {
     id: string;
     url: string;
-    title: string;
-    title_default: string;
+
+    /** If the title of the page is not provided it will not render in the sidebar */
+    title?: string;
+    title_default?: string;
     isDiscovery?: boolean;
     schema: {
         id: string;
@@ -135,6 +137,8 @@ export type AdminSection<T extends string> = {
     sectionTitleDefault: string;
     isHidden: CheckFunction | boolean;
     id?: string;
+
+    /** Every page here will be rendered into the sidebar */
     pages: Array<AdminDefinitionPages>;
 };
 

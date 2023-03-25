@@ -29,7 +29,7 @@ export type Index = {
     search(query: string): string[];
 }
 
-function extractTextsFromSection(section: Record<string, any>, intl: IntlShape) {
+function extractTextsFromSection(section: AdminDefinitionPages, intl: IntlShape) {
     const texts: Array<string | string[]> = [];
     if (section.title) {
         texts.push(intl.formatMessage({id: section.title, defaultMessage: section.title_default}));
@@ -50,7 +50,8 @@ function extractTextsFromSection(section: Record<string, any>, intl: IntlShape) 
     if (section.schema) {
         if (section.schema.settings) {
             texts.push(extractTextFromSettings(section.schema.settings, intl));
-        } else if (section.schema.sections) {
+        }
+        if (section.schema.sections) {
             section.schema.sections.forEach((schemaSection: any) => {
                 texts.push(...extractTextFromSettings(schemaSection.settings, intl));
             });
@@ -60,10 +61,14 @@ function extractTextsFromSection(section: Record<string, any>, intl: IntlShape) 
     return texts;
 }
 
-function extractTextFromSettings(settings: Array<Record<string, any>>, intl: IntlShape) {
-    const texts = [];
+function extractTextFromSettings(settings: AdminDefinitionPages['schema']['settings'], intl: IntlShape) {
+    const texts: string[] = [];
 
-    for (const setting of Object.values(settings)) {
+    if (!settings) {
+        return texts;
+    }
+
+    for (const setting of settings) {
         if (setting.label) {
             texts.push(intl.formatMessage({id: setting.label, defaultMessage: setting.label_default}, setting.label_values));
         }
@@ -98,10 +103,9 @@ export function adminDefinitionsToUrlsAndTexts(adminDefinition: typeof AdminDefi
         adminDefinition.billing,
     ];
     for (const section of sections) {
-        for (const page of Object.values(section)) {
-            if (typeof page === 'object' && Object.hasOwn(page, 'isDiscovery')) {
-                const discoveryPage = page as AdminDefinitionPages;
-                entries[discoveryPage.url] = extractTextsFromSection(page, intl);
+        for (const page of section.pages) {
+            if (!page.isDiscovery) {
+                entries[page.url] = extractTextsFromSection(page, intl);
             }
         }
     }

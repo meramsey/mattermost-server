@@ -22,7 +22,7 @@ import {CloudState} from '@mattermost/types/cloud';
 import {DeepPartial} from '@mattermost/types/utilities';
 import {AdminConfig, EnvironmentConfig} from '@mattermost/types/config';
 
-import {AdminDefinitionPages, AdminDefinitions} from '@mattermost/types/admin';
+import {AdminDefinitionPages} from '@mattermost/types/admin';
 
 import AdminSidebar from './admin_sidebar';
 import Highlight from './highlight';
@@ -104,22 +104,10 @@ export default class AdminConsole extends React.PureComponent<Props, State> {
 
         // looking at each section of the adminDefinitions
         Object.values(adminDefinition).forEach((section) => {
-            let isSectionHidden = false;
-
-            // finding the pages that are hidden
-            Object.entries(section).find(([key, value]) => {
-                if (key === 'isHidden') {
-                    if (typeof value === 'function') {
-                        isSectionHidden = value(config, this.state, license, buildEnterpriseReady, consoleAccess, cloud, isCurrentUserSystemAdmin);
-                    } else {
-                        isSectionHidden = Boolean(value);
-                    }
-                }
-                return null;
-            });
+            const isSectionHidden = (typeof section.isHidden === 'function') ? section.isHidden(config, this.state, license, buildEnterpriseReady, consoleAccess, cloud, isCurrentUserSystemAdmin) : Boolean(section.isHidden);
 
             if (!isSectionHidden) {
-                const items: AdminDefinitionPages[] = Object.values(section).filter((value) => {
+                const items: AdminDefinitionPages[] = section.pages.filter((value) => {
                     if (value && typeof value === 'object') {
                         return Object.hasOwn(value, 'schema');
                     }
@@ -132,21 +120,12 @@ export default class AdminConsole extends React.PureComponent<Props, State> {
 
         let defaultUrl = '';
 
-        const schemaRoutes = schemas.map((item, index) => {
-            if (typeof item.isHidden !== 'undefined') {
-                const isHidden = (typeof item.isHidden === 'function') ? item.isHidden(config, this.state, license, buildEnterpriseReady, consoleAccess, cloud, isCurrentUserSystemAdmin) : Boolean(item.isHidden);
-                if (isHidden) {
-                    return false;
-                }
-            }
+        const schemaRoutes = schemas.filter((page) => {
+            const isPageHidden = (typeof page.isHidden === 'function') ? page.isHidden(config, this.state, license, buildEnterpriseReady, consoleAccess, cloud, isCurrentUserSystemAdmin) : Boolean(page.isHidden);
 
-            let isItemDisabled: boolean;
-
-            if (typeof item.isDisabled === 'function') {
-                isItemDisabled = item.isDisabled(config, this.state, license, buildEnterpriseReady, consoleAccess, cloud, isCurrentUserSystemAdmin);
-            } else {
-                isItemDisabled = Boolean(item.isDisabled);
-            }
+            return !isPageHidden;
+        }).map((page, index) => {
+            const isItemDisabled = (typeof page.isDisabled === 'function') ? page.isDisabled(config, this.state, license, buildEnterpriseReady, consoleAccess, cloud, isCurrentUserSystemAdmin) : Boolean(page.isDisabled);
 
             if (!isItemDisabled && defaultUrl === '') {
                 const {url} = schemas[index];
@@ -160,14 +139,14 @@ export default class AdminConsole extends React.PureComponent<Props, State> {
 
             return (
                 <Route
-                    key={item.url}
-                    path={`${this.props.match.url}/${item.url}`}
+                    key={page.url}
+                    path={`${this.props.match.url}/${page.url}`}
                     render={(props) => (
                         <SchemaAdminSettings
                             {...extraProps}
                             {...props}
                             consoleAccess={this.props.consoleAccess}
-                            schema={item.schema}
+                            schema={page.schema}
                             isDisabled={isItemDisabled}
                         />
                     )}

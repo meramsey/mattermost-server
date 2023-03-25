@@ -562,8 +562,6 @@ const AdminDefinition: AdminDefinitions = {
             {
                 id: 'system_user_detail',
                 url: 'user_management/user/:user_id',
-                title_default: 'User Configuration',
-                title: t('systemUserDetail.title'),
                 isDisabled: it.not(it.userHasWritePermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.USERS)),
                 isHidden: it.not(it.userHasReadPermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.USERS)),
                 schema: {
@@ -574,8 +572,6 @@ const AdminDefinition: AdminDefinitions = {
             {
                 id: 'group_details',
                 url: 'user_management/groups/:group_id',
-                title_default: 'Group Configuration',
-                title: t('admin.group_settings.group_detail.group_configuration'),
                 isDisabled: it.not(it.userHasWritePermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.GROUPS)),
                 isHidden: it.not(it.userHasReadPermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.GROUPS)),
                 schema: {
@@ -630,8 +626,6 @@ const AdminDefinition: AdminDefinitions = {
             {
                 id: 'team_detail',
                 url: 'user_management/teams/:team_id',
-                title_default: 'Team Configuration',
-                title: t('admin.team_settings.team_detail.group_configuration'),
                 isDisabled: it.not(it.userHasWritePermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.TEAMS)),
                 isHidden: it.not(it.userHasReadPermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.TEAMS)),
                 schema: {
@@ -658,8 +652,6 @@ const AdminDefinition: AdminDefinitions = {
             {
                 id: 'channel_detail',
                 url: 'user_management/channels/:channel_id',
-                title: t('admin.channel_settings.channel_detail.channel_configuration'),
-                title_default: 'Channel Configuration',
                 isDisabled: it.not(it.userHasWritePermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.CHANNELS)),
                 isHidden: it.not(it.userHasReadPermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.CHANNELS)),
                 schema: {
@@ -682,10 +674,8 @@ const AdminDefinition: AdminDefinitions = {
             {
                 id: 'systemScheme',
                 url: 'user_management/permissions/system_scheme',
-                title_default: 'System Scheme',
-                title: t('admin.permissions.systemScheme'),
                 isDisabled: it.not(it.userHasWritePermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.PERMISSIONS)),
-                isHidden: false,
+                isHidden: it.not(it.userHasReadPermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.PERMISSIONS)),
                 schema: {
                     id: 'PermissionSystemScheme',
                     component: PermissionSystemSchemeSettings,
@@ -694,10 +684,8 @@ const AdminDefinition: AdminDefinitions = {
             {
                 id: 'teamSchemeDetail',
                 url: 'user_management/permissions/team_override_scheme/:scheme_id',
-                title: t('admin.permissions.teamSchemeDetail'),
-                title_default: 'Team Scheme',
                 isDisabled: it.not(it.userHasWritePermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.PERMISSIONS)),
-                isHidden: false,
+                isHidden: it.not(it.userHasReadPermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.PERMISSIONS)),
                 schema: {
                     id: 'PermissionSystemScheme',
                     component: PermissionTeamSchemeSettings,
@@ -706,10 +694,8 @@ const AdminDefinition: AdminDefinitions = {
             {
                 id: 'teamScheme',
                 url: 'user_management/permissions/team_override_scheme',
-                title: t('admin.permissions.teamSchemeDetail'),
-                title_default: 'Team Scheme',
                 isDisabled: it.not(it.userHasWritePermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.PERMISSIONS)),
-                isHidden: false,
+                isHidden: it.not(it.userHasReadPermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.PERMISSIONS)),
                 schema: {
                     id: 'PermissionSystemScheme',
                     component: PermissionTeamSchemeSettings,
@@ -744,10 +730,6 @@ const AdminDefinition: AdminDefinitions = {
             {
                 id: 'system_role',
                 url: 'user_management/system_roles/:role_id',
-
-                // might need to change this, since it's not dynamic and the title changes based on the role
-                title: t('admin.sidebar.systemRoles'),
-                title_default: 'System Roles',
                 isDisabled: it.not(it.userHasWritePermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.SYSTEM_ROLES)),
                 isHidden: false,
                 schema: {
@@ -6276,8 +6258,6 @@ const AdminDefinition: AdminDefinitions = {
             {
                 id: 'custom_policy_form_edit',
                 url: 'compliance/data_retention_settings/custom_policy/:policy_id',
-                title: t('admin.data_retention.customTitle'),
-                title_default: 'Custom Retention Policy',
                 isHidden: it.any(
                     it.not(it.licensedForFeature('DataRetention')),
                     it.not(it.userHasReadPermissionOnResource(RESOURCE_KEYS.COMPLIANCE.DATA_RETENTION_POLICY)),
@@ -6292,8 +6272,6 @@ const AdminDefinition: AdminDefinitions = {
             {
                 id: 'custom_policy_form',
                 url: 'compliance/data_retention_settings/custom_policy',
-                title: t('admin.data_retention.customTitle'),
-                title_default: 'Custom Retention Policy',
                 isHidden: it.any(
                     it.not(it.licensedForFeature('DataRetention')),
                     it.not(it.userHasReadPermissionOnResource(RESOURCE_KEYS.COMPLIANCE.DATA_RETENTION_POLICY)),
@@ -6308,8 +6286,6 @@ const AdminDefinition: AdminDefinitions = {
             {
                 id: 'global_policy_form',
                 url: 'compliance/data_retention_settings/global_policy',
-                title_default: 'Global Retention Policy',
-                title: t('admin.data_retention.globalPolicyTitle'),
                 isHidden: it.any(
                     it.not(it.licensedForFeature('DataRetention')),
                     it.not(it.userHasReadPermissionOnResource(RESOURCE_KEYS.COMPLIANCE.DATA_RETENTION_POLICY)),

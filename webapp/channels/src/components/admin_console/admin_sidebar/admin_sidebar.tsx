@@ -23,7 +23,7 @@ import QuickInput from 'components/quick_input';
 import AdminDefinition from '../admin_definition';
 
 import type {PropsFromRedux} from './index';
-import {AdminDefinitions, AdminDefinitionPages} from '@mattermost/types/admin';
+import {AdminDefinitionPages} from '@mattermost/types/admin';
 
 export interface Props extends PropsFromRedux {
     intl: IntlShape;
@@ -144,17 +144,16 @@ class AdminSidebar extends React.PureComponent<Props, State> {
 
     visibleSections = () => {
         const {config, license, buildEnterpriseReady, consoleAccess, adminDefinition, cloud} = this.props;
-        const isVisible = (item: unknown) => {
-            if (!item || typeof item !== 'object') {
-                return undefined;
+        const isVisible = (page: AdminDefinitionPages) => {
+            if (!page) {
+                return null;
             }
 
             // The items don't meet the criteria to be a section.
-            if (!Object.keys(item).includes('url' && 'title' && 'schema' && 'isHidden')) {
-                return undefined;
+            if (!page.url || !page.title || !page.schema) {
+                return null;
             }
 
-            const page = item as AdminDefinitionPages;
             if (
                 page.isHidden && (
                     typeof page.isHidden === 'boolean' ||
@@ -167,8 +166,8 @@ class AdminSidebar extends React.PureComponent<Props, State> {
         };
 
         const result = new Set();
-        for (const section of Object.values<AdminDefinitions[keyof AdminDefinitions]>(adminDefinition)) {
-            for (const page of Object.values(section)) {
+        for (const section of Object.values(adminDefinition)) {
+            for (const page of section.pages) {
                 const visiblePage = isVisible(page);
                 if (visiblePage) {
                     result.add(visiblePage.url);
@@ -182,84 +181,81 @@ class AdminSidebar extends React.PureComponent<Props, State> {
         const {config, license, buildEnterpriseReady, consoleAccess, cloud, subscriptionProduct} = this.props;
         const sidebarSections: JSX.Element[] = [];
         Object.entries(definition).forEach(([key, section]) => {
-            let isSectionHidden = false;
-            if (section.isHidden) {
-                isSectionHidden = typeof section.isHidden === 'function' ? section.isHidden(config, this.state, license, buildEnterpriseReady, consoleAccess, cloud) : Boolean(section.isHidden);
+            const isSectionHidden = typeof section.isHidden === 'function' ? section.isHidden(config, this.state, license, buildEnterpriseReady, consoleAccess, cloud) : Boolean(section.isHidden);
+            if (isSectionHidden) {
+                return;
             }
-            if (!isSectionHidden) {
-                const sidebarItems: JSX.Element[] = [];
-                Object.entries(section).
-                    filter((section) => typeof section === 'object' && Object.hasOwn(section, 'title')).
-                    forEach(([subKey, item]) => {
-                        const sectionPage = item as AdminDefinitionPages;
-                        if (!sectionPage.title) {
+            const sidebarItems: JSX.Element[] = [];
+
+            section.pages.
+                forEach((sectionPage) => {
+                    if (!sectionPage.title) {
+                        return;
+                    }
+
+                    if (sectionPage.isHidden) {
+                        if (typeof sectionPage.isHidden === 'function' ? sectionPage.isHidden(config, this.state, license, buildEnterpriseReady, consoleAccess, cloud) : Boolean(sectionPage.isHidden)) {
                             return;
                         }
+                    }
 
-                        if (sectionPage.isHidden) {
-                            if (typeof sectionPage.isHidden === 'function' ? sectionPage.isHidden(config, this.state, license, buildEnterpriseReady, consoleAccess, cloud) : Boolean(sectionPage.isHidden)) {
-                                return;
+                    if (this.state.sections !== null) {
+                        let active = false;
+                        for (const url of this.state.sections) {
+                            if (url === sectionPage.url) {
+                                active = true;
                             }
                         }
-
-                        if (this.state.sections !== null) {
-                            let active = false;
-                            for (const url of this.state.sections) {
-                                if (url === sectionPage.url) {
-                                    active = true;
-                                }
-                            }
-                            if (!active) {
-                                return;
-                            }
+                        if (!active) {
+                            return;
                         }
-                        const subDefinitionKey = `${key}.${subKey}`;
-                        sidebarItems.push((
-                            <AdminSidebarSection
-                                key={subDefinitionKey}
-                                definitionKey={subDefinitionKey}
-                                name={sectionPage.url}
-                                restrictedIndicator={sectionPage.restrictedIndicator?.shouldDisplay(license, subscriptionProduct) ? sectionPage.restrictedIndicator.value(cloud) : undefined}
-                                title={
-                                    <FormattedMessage
-                                        id={sectionPage.title}
-                                        defaultMessage={sectionPage.title_default}
-                                    />
-                                }
-                            />
-                        ));
-                    });
+                    }
+                    const subDefinitionKey = `${key}.${sectionPage.id}`;
+                    sidebarItems.push((
+                        <AdminSidebarSection
+                            key={subDefinitionKey}
+                            definitionKey={subDefinitionKey}
+                            name={sectionPage.url}
+                            restrictedIndicator={sectionPage.restrictedIndicator?.shouldDisplay(license, subscriptionProduct) ? sectionPage.restrictedIndicator.value(cloud) : undefined}
+                            title={
+                                <FormattedMessage
+                                    id={sectionPage.title}
+                                    defaultMessage={sectionPage.title_default}
+                                />
+                            }
+                        />
+                    ));
+                });
 
-                // Special case for plugins entries
-                if ((section as typeof AdminDefinition['plugins']).id === 'plugins') {
-                    const sidebarPluginItems = this.renderPluginsMenu();
-                    sidebarItems.push(...sidebarPluginItems);
-                }
-
-                // If no visible items, don't display this section
-                if (sidebarItems.length === 0) {
-                    return null;
-                }
-
-                sidebarSections.push((
-                    <AdminSidebarCategory
-                        key={key}
-                        definitionKey={key}
-                        parentLink='/admin_console'
-                        icon={section.icon}
-                        sectionClass=''
-                        title={
-                            <FormattedMessage
-                                id={section.sectionTitle}
-                                defaultMessage={section.sectionTitleDefault}
-                            />
-                        }
-                    >
-                        {sidebarItems}
-                    </AdminSidebarCategory>
-                ));
+            // Special case for plugins entries
+            // if ((section as typeof AdminDefinition['plugins']).id === 'plugins') {
+            if (section.id === 'plugins') {
+                const sidebarPluginItems = this.renderPluginsMenu();
+                sidebarItems.push(...sidebarPluginItems);
             }
-            return null;
+
+            // If no visible items, don't display this section
+            if (sidebarItems.length === 0) {
+                return;
+            }
+
+            sidebarSections.push((
+                <AdminSidebarCategory
+                    key={key}
+                    definitionKey={key}
+                    parentLink='/admin_console'
+                    icon={section.icon}
+                    sectionClass=''
+                    title={
+                        <FormattedMessage
+                            id={section.sectionTitle}
+                            defaultMessage={section.sectionTitleDefault}
+                        />
+                    }
+                >
+                    {sidebarItems}
+                </AdminSidebarCategory>
+            ));
         });
         return sidebarSections;
     }
