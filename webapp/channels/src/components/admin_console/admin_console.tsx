@@ -22,7 +22,7 @@ import {CloudState} from '@mattermost/types/cloud';
 import {DeepPartial} from '@mattermost/types/utilities';
 import {AdminConfig, EnvironmentConfig} from '@mattermost/types/config';
 
-import {AdminDefinitionPages} from '@mattermost/types/admin';
+import {AdminSectionPages} from '@mattermost/types/admin';
 
 import AdminSidebar from './admin_sidebar';
 import Highlight from './highlight';
@@ -100,14 +100,14 @@ export default class AdminConsole extends React.PureComponent<Props, State> {
     private renderRoutes = (extraProps: ExtraProps) => {
         const {adminDefinition, config, license, buildEnterpriseReady, consoleAccess, cloud, isCurrentUserSystemAdmin} = this.props;
 
-        const schemas: AdminDefinitionPages[] = [];
+        const schemas: AdminSectionPages[] = [];
 
         // looking at each section of the adminDefinitions
         Object.values(adminDefinition).forEach((section) => {
             const isSectionHidden = (typeof section.isHidden === 'function') ? section.isHidden(config, this.state, license, buildEnterpriseReady, consoleAccess, cloud, isCurrentUserSystemAdmin) : Boolean(section.isHidden);
 
             if (!isSectionHidden) {
-                const items: AdminDefinitionPages[] = section.pages.filter((value) => {
+                const items: AdminSectionPages[] = section.pages.filter((value) => {
                     if (value && typeof value === 'object') {
                         return Object.hasOwn(value, 'schema');
                     }

@@ -103,7 +103,7 @@ export type ConsoleAccess = {
 
 export type CheckFunction = (config?: DeepPartial<AdminConfig>, state?: Record<string, any>, license?: ClientLicense, enterpriseReady?: boolean, consoleAccess?: ConsoleAccess, cloud?: CloudState, isSystemAdmin?: boolean) => boolean;
 
-export type AdminDefinitionPages = {
+export type AdminSectionPages = {
     id: string;
     url: string;
 
@@ -139,7 +139,7 @@ export type AdminSection<T extends string> = {
     id?: string;
 
     /** Every page here will be rendered into the sidebar */
-    pages: Array<AdminDefinitionPages>;
+    pages: Array<AdminSectionPages>;
 };
 
 type AboutSections = 'license'

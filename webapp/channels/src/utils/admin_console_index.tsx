@@ -9,7 +9,7 @@ import {PluginRedux} from '@mattermost/types/plugins';
 import AdminDefinition from 'components/admin_console/admin_definition';
 
 import {getPluginEntries} from './admin_console_plugin_index';
-import {AdminDefinitionPages} from '@mattermost/types/admin';
+import {AdminSectionPages} from '@mattermost/types/admin';
 
 export type Index = {
 
@@ -29,7 +29,7 @@ export type Index = {
     search(query: string): string[];
 }
 
-function extractTextsFromSection(section: AdminDefinitionPages, intl: IntlShape) {
+function extractTextsFromSection(section: AdminSectionPages, intl: IntlShape) {
     const texts: Array<string | string[]> = [];
     if (section.title) {
         texts.push(intl.formatMessage({id: section.title, defaultMessage: section.title_default}));
@@ -61,7 +61,7 @@ function extractTextsFromSection(section: AdminDefinitionPages, intl: IntlShape)
     return texts;
 }
 
-function extractTextFromSettings(settings: AdminDefinitionPages['schema']['settings'], intl: IntlShape) {
+function extractTextFromSettings(settings: AdminSectionPages['schema']['settings'], intl: IntlShape) {
     const texts: string[] = [];
 
     if (!settings) {

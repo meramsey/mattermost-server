@@ -23,7 +23,7 @@ import QuickInput from 'components/quick_input';
 import AdminDefinition from '../admin_definition';
 
 import type {PropsFromRedux} from './index';
-import {AdminDefinitionPages} from '@mattermost/types/admin';
+import {AdminSectionPages} from '@mattermost/types/admin';
 
 export interface Props extends PropsFromRedux {
     intl: IntlShape;
@@ -144,7 +144,7 @@ class AdminSidebar extends React.PureComponent<Props, State> {
 
     visibleSections = () => {
         const {config, license, buildEnterpriseReady, consoleAccess, adminDefinition, cloud} = this.props;
-        const isVisible = (page: AdminDefinitionPages) => {
+        const isVisible = (page: AdminSectionPages) => {
             if (!page) {
                 return null;
             }
