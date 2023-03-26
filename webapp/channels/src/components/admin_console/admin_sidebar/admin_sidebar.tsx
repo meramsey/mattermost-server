@@ -145,10 +145,6 @@ class AdminSidebar extends React.PureComponent<Props, State> {
     visibleSections = () => {
         const {config, license, buildEnterpriseReady, consoleAccess, adminDefinition, cloud} = this.props;
         const isVisible = (page: AdminSectionPages) => {
-            if (!page) {
-                return null;
-            }
-
             // The items don't meet the criteria to be a section.
             if (!page.url || !page.title || !page.schema) {
                 return null;
@@ -167,10 +163,12 @@ class AdminSidebar extends React.PureComponent<Props, State> {
 
         const result = new Set();
         for (const section of Object.values(adminDefinition)) {
-            for (const page of section.pages) {
-                const visiblePage = isVisible(page);
-                if (visiblePage) {
-                    result.add(visiblePage.url);
+            if (section?.pages?.length > 0) {
+                for (const page of section.pages) {
+                    const visiblePage = isVisible(page);
+                    if (visiblePage) {
+                        result.add(visiblePage.url);
+                    }
                 }
             }
         }

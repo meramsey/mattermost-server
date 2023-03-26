@@ -32,10 +32,6 @@ describe('Selectors.AdminConsole', () => {
                     },
                 },
             });
-
-            console.log({
-                result,
-            });
             expect(result.something).toEqual('test');
         });
 

@@ -107,13 +107,7 @@ export default class AdminConsole extends React.PureComponent<Props, State> {
             const isSectionHidden = (typeof section.isHidden === 'function') ? section.isHidden(config, this.state, license, buildEnterpriseReady, consoleAccess, cloud, isCurrentUserSystemAdmin) : Boolean(section.isHidden);
 
             if (!isSectionHidden) {
-                const items: AdminSectionPages[] = section.pages.filter((value) => {
-                    if (value && typeof value === 'object') {
-                        return Object.hasOwn(value, 'schema');
-                    }
-
-                    return false;
-                });
+                const items: AdminSectionPages[] = section.pages.filter((value) => value?.schema);
                 schemas.push(...items);
             }
         });
