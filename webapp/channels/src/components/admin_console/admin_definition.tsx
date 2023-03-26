@@ -4,19 +4,19 @@
 /* eslint-disable max-lines */
 
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import {FormattedMessage} from 'react-intl';
 
-import { AccountMultipleOutlineIcon, ChartBarIcon, CogOutlineIcon, CreditCardOutlineIcon, FlaskOutlineIcon, FormatListBulletedIcon, InformationOutlineIcon, PowerPlugOutlineIcon, ServerVariantIcon, ShieldOutlineIcon, SitemapIcon, ProductsIcon } from '@mattermost/compass-icons/components';
+import {AccountMultipleOutlineIcon, ChartBarIcon, CogOutlineIcon, CreditCardOutlineIcon, FlaskOutlineIcon, FormatListBulletedIcon, InformationOutlineIcon, PowerPlugOutlineIcon, ServerVariantIcon, ShieldOutlineIcon, SitemapIcon, ProductsIcon} from '@mattermost/compass-icons/components';
 
-import { DeepPartial } from 'redux';
+import {DeepPartial} from 'redux';
 
-import { RESOURCE_KEYS } from 'mattermost-redux/constants/permissions_sysconsole';
+import {RESOURCE_KEYS} from 'mattermost-redux/constants/permissions_sysconsole';
 
-import { Constants, CloudProducts, LicenseSkus } from 'utils/constants';
-import { isCloudFreePlan } from 'utils/cloud_utils';
-import { isCloudLicense } from 'utils/license_utils';
-import { getSiteURL } from 'utils/url';
-import { t } from 'utils/i18n';
+import {Constants, CloudProducts, LicenseSkus} from 'utils/constants';
+import {isCloudFreePlan} from 'utils/cloud_utils';
+import {isCloudLicense} from 'utils/license_utils';
+import {getSiteURL} from 'utils/url';
+import {t} from 'utils/i18n';
 import {
     ldapTest, invalidateAllCaches, reloadConfig, testS3Connection,
     removeIdpSamlCertificate, uploadIdpSamlCertificate,
@@ -32,15 +32,15 @@ import PluginManagement from 'components/admin_console/plugin_management';
 import CustomPluginSettings from 'components/admin_console/custom_plugin_settings';
 import RestrictedIndicator from 'components/widgets/menu/menu_items/restricted_indicator';
 
-import { trackEvent } from 'actions/telemetry_actions.jsx';
+import {trackEvent} from 'actions/telemetry_actions.jsx';
 
 import ExternalLink from 'components/external_link';
 
-import { AdminDefinitions, CheckFunction, ConsoleAccess } from '@mattermost/types/admin';
+import {AdminDefinitions, CheckFunction, ConsoleAccess} from '@mattermost/types/admin';
 
-import { AdminConfig, ClientLicense, SSOSettings } from '@mattermost/types/config';
+import {AdminConfig, ClientLicense, SSOSettings} from '@mattermost/types/config';
 
-import { CloudState, Product } from '@mattermost/types/cloud';
+import {CloudState, Product} from '@mattermost/types/cloud';
 
 import OpenIdConvert from './openid_convert';
 import Audits from './audits';
@@ -285,7 +285,7 @@ const getRestrictedIndicator = (displayBlocked = false, minimumPlanRequiredForFe
 const AdminDefinition: AdminDefinitions = {
     about: {
         icon: (
-            <InformationOutlineIcon size={16} />
+            <InformationOutlineIcon size={16}/>
         ),
         sectionTitle: t('admin.sidebar.about'),
         sectionTitleDefault: 'About',
@@ -499,7 +499,7 @@ const AdminDefinition: AdminDefinitions = {
                 title: t('admin.sidebar.teamStatistics'),
                 title_default: 'Team Statistics',
                 searchableStrings: [
-                    ['analytics.team.title', { team: '' }],
+                    ['analytics.team.title', {team: ''}],
                     'analytics.system.info',
                     'analytics.team.totalPosts',
                     'analytics.team.activeUsers',
@@ -553,7 +553,7 @@ const AdminDefinition: AdminDefinitions = {
                 title: t('admin.sidebar.users'),
                 title_default: 'Users',
                 searchableStrings: [
-                    ['admin.system_users.title', { siteName: '' }],
+                    ['admin.system_users.title', {siteName: ''}],
                 ],
                 isDisabled: it.not(it.userHasWritePermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.USERS)),
                 isHidden: it.not(it.userHasReadPermissionOnResource(RESOURCE_KEYS.USER_MANAGEMENT.USERS)),
@@ -1065,7 +1065,7 @@ const AdminDefinition: AdminDefinitions = {
                 title_default: 'Database',
                 searchableStrings: [
                     'admin.database.title',
-                    ['admin.recycle.recycleDescription', { featureName: '', reloadConfiguration: '' }],
+                    ['admin.recycle.recycleDescription', {featureName: '', reloadConfiguration: ''}],
                     'admin.recycle.recycleDescription.featureName',
                     'admin.recycle.recycleDescription.reloadConfiguration',
                     'admin.recycle.button',
@@ -1112,10 +1112,10 @@ const AdminDefinition: AdminDefinitions = {
                 searchableStrings: [
                     'admin.elasticsearch.title',
                     'admin.elasticsearch.enableIndexingTitle',
-                    ['admin.elasticsearch.enableIndexingDescription', { documentationLink: '' }],
+                    ['admin.elasticsearch.enableIndexingDescription', {documentationLink: ''}],
                     'admin.elasticsearch.enableIndexingDescription.documentationLinkText',
                     'admin.elasticsearch.connectionUrlTitle',
-                    ['admin.elasticsearch.connectionUrlDescription', { documentationLink: '' }],
+                    ['admin.elasticsearch.connectionUrlDescription', {documentationLink: ''}],
                     'admin.elasticsearch.connectionUrlExample.documentationLinkText',
                     'admin.elasticsearch.skipTLSVerificationTitle',
                     'admin.elasticsearch.skipTLSVerificationDescription',
@@ -2584,6 +2584,7 @@ const AdminDefinition: AdminDefinitions = {
                                 it.not(it.userHasWritePermissionOnResource(RESOURCE_KEYS.SITE.NOTIFICATIONS)),
                                 it.stateIsFalse('EmailSettings.SendEmailNotifications'),
                             ),
+
                             // MM-50952
                             // If the setting is hidden, then it is not being set in state so there is
                             // nothing to validate, and validation would fail anyways and prevent saving
@@ -3341,8 +3342,8 @@ const AdminDefinition: AdminDefinitions = {
                 searchableStrings: [
                     'user.settings.security.passwordMinLength',
                     'admin.security.password',
-                    ['admin.password.minimumLength', { max: '', min: '' }],
-                    ['admin.password.minimumLengthDescription', { max: '', min: '' }],
+                    ['admin.password.minimumLength', {max: '', min: ''}],
+                    ['admin.password.minimumLengthDescription', {max: '', min: ''}],
                     'passwordRequirements',
                     'admin.password.lowercase',
                     'admin.password.uppercase',
@@ -3684,7 +3685,7 @@ const AdminDefinition: AdminDefinitions = {
                                     help_text: t('admin.ldap.groupFilterFilterDesc'),
                                     help_text_markdown: true,
                                     help_text_default: '(Optional) Enter an AD/LDAP filter to use when searching for group objects. Only the groups selected by the query will be available to Mattermost. From [User Management > Groups]({siteURL}/admin_console/user_management/groups), select which AD/LDAP groups should be linked and configured.',
-                                    help_text_values: { siteURL: getSiteURL() },
+                                    help_text_values: {siteURL: getSiteURL()},
                                     placeholder: t('admin.ldap.groupFilterEx'),
                                     placeholder_default: 'E.g.: "(objectClass=group)"',
                                     isHidden: it.not(it.licensedForFeature('LDAPGroups')),
@@ -4812,7 +4813,7 @@ const AdminDefinition: AdminDefinitions = {
                         return newState;
                     },
                     onConfigSave: (config: Record<string, any>) => {
-                        const newConfig = { ...config };
+                        const newConfig = {...config};
 
                         /**
                          * Need to do some testing here as `url` doesn't exist on the GitlabSettings object.
@@ -4958,7 +4959,7 @@ const AdminDefinition: AdminDefinitions = {
                         return newState;
                     },
                     onConfigSave: (config: AdminConfig & { oauthType?: string; GitLabSettings: { Url: string } }) => {
-                        const newConfig = { ...config } as AdminConfig & { oauthType?: string; GitLabSettings: { Url: string } };
+                        const newConfig = {...config} as AdminConfig & { oauthType?: string; GitLabSettings: { Url: string } };
                         newConfig.GitLabSettings = config.GitLabSettings || {};
                         newConfig.Office365Settings = config.Office365Settings || {};
                         newConfig.GoogleSettings = config.GoogleSettings || {};
@@ -5335,7 +5336,7 @@ const AdminDefinition: AdminDefinitions = {
                         return newState;
                     },
                     onConfigSave: (config) => {
-                        const newConfig = { ...config } as AdminConfig & { openidType?: string };
+                        const newConfig = {...config} as AdminConfig & { openidType?: string };
                         newConfig.Office365Settings = config.Office365Settings || {};
                         newConfig.GoogleSettings = config.GoogleSettings || {};
                         newConfig.GitLabSettings = config.GitLabSettings || {};
@@ -6129,7 +6130,7 @@ const AdminDefinition: AdminDefinitions = {
                             help_text: t('admin.service.disableBotWhenOwnerIsDeactivated'),
                             help_text_default: 'When a user is deactivated, disables all bot accounts managed by the user. To re-enable bot accounts, go to [Integrations > Bot Accounts]({siteURL}/_redirect/integrations/bots).',
                             help_text_markdown: true,
-                            help_text_values: { siteURL: getSiteURL() },
+                            help_text_values: {siteURL: getSiteURL()},
                             isDisabled: it.not(it.userHasWritePermissionOnResource(RESOURCE_KEYS.INTEGRATIONS.BOT_ACCOUNTS)),
                         },
                     ],
@@ -6367,7 +6368,7 @@ const AdminDefinition: AdminDefinitions = {
                     'admin.complianceExport.exportJobStartTime.title',
                     'admin.complianceExport.exportJobStartTime.description',
                     'admin.complianceExport.exportFormat.title',
-                    ['admin.complianceExport.exportFormat.description', { siteURL: '' }],
+                    ['admin.complianceExport.exportFormat.description', {siteURL: ''}],
                     'admin.complianceExport.createJob.title',
                     'admin.complianceExport.createJob.help',
                     'admin.complianceExport.globalRelayCustomerType.title',
@@ -6442,7 +6443,7 @@ const AdminDefinition: AdminDefinitions = {
                             label: t('admin.compliance.newComplianceExportBanner'),
                             label_markdown: true,
                             label_default: 'This feature is replaced by a new [Compliance Export]({siteURL}/admin_console/compliance/export) feature, and will be removed in a future release. We recommend migrating to the new system.',
-                            label_values: { siteURL: getSiteURL() },
+                            label_values: {siteURL: getSiteURL()},
                             banner_type: 'info',
                             isHidden: it.not(it.licensedForFeature('Compliance')),
                         },
@@ -7104,7 +7105,7 @@ const AdminDefinition: AdminDefinitions = {
                 searchableStrings: [
                     'admin.bleve.title',
                     'admin.bleve.enableIndexingTitle',
-                    ['admin.bleve.enableIndexingDescription', { documentationLink: '' }],
+                    ['admin.bleve.enableIndexingDescription', {documentationLink: ''}],
                     'admin.bleve.enableIndexingDescription.documentationLinkText',
                     'admin.bleve.bulkIndexingTitle',
                     'admin.bleve.createJob.help',
